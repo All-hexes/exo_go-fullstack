@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 const Thing = require('./models/Thing');
+const { $where } = require('./models/Thing');
 
 mongoose.connect('mongodb+srv://robal22:eCXwVq5RaynnB6kF@cluster0.yiayu.mongodb.net/?retryWrites=true&w=majority',
     {
@@ -31,6 +32,18 @@ app.post('/api/stuff', (req, res, next) => {
     });
     thing.save()
         .then(() => res.status(201).json({ message: 'Objet enregistré !' }))
+        .catch(error => res.status(400).json({ error }));
+});
+
+app.put('/api/stuff/:id', (req, res, next) => {
+    Thing.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
+        .then(() => res.status(200).json({ message: 'Objet modifié !' }))
+        .catch(error => res.status(400).json({ error }));
+});
+
+app.delete('/api/stuff/:id', (req, res, next) => {
+    Thing.deleteOne({ _id: req.params.id })
+        .then(() => res.status(200).json({ message: 'Objet supprimé !' }))
         .catch(error => res.status(400).json({ error }));
 });
 
