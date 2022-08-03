@@ -1,20 +1,6 @@
-const mongoose = require('mongoose');
-const express = require('express');
-const cors = require('cors');
-const router = express.Router();
-const Thing = require('./models/thing');
-const app = express();
-// ne pas toucher la connex mongoose
-mongoose.connect('mongodb+srv://robal22:eCXwVq5RaynnB6kF@cluster0.yiayu.mongodb.net/?retryWrites=true&w=majority',
-    {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-    })
-    .then(() => console.log('Connexion à MongoDB réussie !'))
-    .catch(() => console.log('Connexion à MongoDB échouée !'));
+const Thing = require('../models/thing');
 
-router.post('/', (req, res, next) => {
-    console.log(req.body)
+exports.createThing = (req, res, next) => {
     const thing = new Thing({
         title: req.body.title,
         description: req.body.description,
@@ -35,9 +21,9 @@ router.post('/', (req, res, next) => {
             });
         }
     );
-});
+};
 
-router.get('/:id', (req, res, next) => {
+exports.getOneThing = (req, res, next) => {
     Thing.findOne({
         _id: req.params.id
     }).then(
@@ -51,9 +37,9 @@ router.get('/:id', (req, res, next) => {
             });
         }
     );
-});
+};
 
-router.put('/:id', (req, res, next) => {
+exports.modifyThing = (req, res, next) => {
     const thing = new Thing({
         _id: req.params.id,
         title: req.body.title,
@@ -75,9 +61,9 @@ router.put('/:id', (req, res, next) => {
             });
         }
     );
-});
+};
 
-router.delete('/:id', (req, res, next) => {
+exports.deleteThing = (req, res, next) => {
     Thing.deleteOne({ _id: req.params.id }).then(
         () => {
             res.status(200).json({
@@ -91,30 +77,18 @@ router.delete('/:id', (req, res, next) => {
             });
         }
     );
-});
+};
 
-router.get('/' +
-    '', (req, res, next) => {
-        Thing.find().then(
-            (things) => {
-                res.status(200).json(things);
-            }
-        ).catch(
-            (error) => {
-                res.status(400).json({
-                    error: error
-                });
-            }
-        );
-    });
-
-// ne pas toucher 
-app.use(express.json());
-app.use(cors());
-// ne pas toucher
-app.use("/api/stuff", router);
-
-
-
-
-module.exports = app;
+exports.getAllStuff = (req, res, next) => {
+    Thing.find().then(
+        (things) => {
+            res.status(200).json(things);
+        }
+    ).catch(
+        (error) => {
+            res.status(400).json({
+                error: error
+            });
+        }
+    );
+};
